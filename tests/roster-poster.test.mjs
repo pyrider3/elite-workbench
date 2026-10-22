@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{posterSections}from'../lib/roster-poster.js';
+const base={site:'办公室',weekday:1,start:'08:20',end:'10:00',enabled:true,names:['甲','乙'],weekRules:{乙:'even'}};
+test('排班图片保留时间和单双周标记，排除停用班次',()=>{const result=posterSections([base,{...base,enabled:false,names:['停用']}]);assert.equal(result.length,1);assert.deepEqual(result[0].days,[1,2,3,4,5]);assert.deepEqual(result[0].slots[0].cells[0].people,[{name:'甲',rule:'all'},{name:'乙',rule:'even'}]);assert.equal(result[0].slots[0].start,'08:20');assert.equal(result[0].slots[0].cells[1].people.length,0)});
+test('按场地分区，启用周末显示周末列，空班不丢失',()=>{const result=posterSections([base,{...base,site:'基地',weekday:0,names:[]},{...base,weekday:6,names:['周六']}]);assert.equal(result.length,2);assert.deepEqual(result[0].days,[1,2,3,4,5,6,0]);assert.equal(result.find(x=>x.site==='基地').slots.length,1);assert.equal(posterSections([{...base,enabled:false}]).length,0)});

@@ -9,7 +9,7 @@ test('打卡原因覆盖未选择、加载、无班、未开放、开放边界�
  assert.equal(state([shift],[],at('07:50')).label,'拍照打卡');
  assert.equal(state([shift],[],at('08:35')).label,'拍照打卡');
  assert.equal(state([shift],[],at('08:35')+1).label,'已超过打卡时限');
- assert.match(state([shift],[],at('08:36')).reason,/办公室示例成员7/);
+ assert.match(state([shift],[],at('08:36')).reason,/办公室示例甲丙乙/);
  assert.equal(state([{...shift,threshold:20}],[],at('08:40')).label,'拍照打卡');
  assert.equal(state([{...shift,threshold:0}],[],at('08:20')+1).label,'已超过打卡时限');
  assert.equal(state([shift],[{shiftId:'a',name:'测试甲',checkin:at('08:20')}]).label,'本班已打卡');

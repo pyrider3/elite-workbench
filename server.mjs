@@ -10,7 +10,7 @@ import {startScheduler} from './lib/scheduler.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'};
 const methods=new Map([
- ['/rankings','GET'],['/volunteer/recognize','POST'],['/volunteer/batch','POST'],['/dashboard','GET'],['/profile','GET'],['/me','GET'],['/admin/data','GET'],
+ ['/forms/a','GET'],['/forms/b','GET'],['/forms/c','GET'],['/forms/d','GET'],['/forms/e','GET'],['/forms/submit','POST'],['/admin/recruit/data','GET'],['/admin/recruit/save','POST'],['/admin/recruit/publish','POST'],['/admin/recruit/route','POST'],['/rankings','GET'],['/volunteer/recognize','POST'],['/volunteer/batch','POST'],['/dashboard','GET'],['/profile','GET'],['/me','GET'],['/admin/data','GET'],
  ['/login','POST'],['/logout','POST'],['/checkin','POST'],['/volunteer','POST'],['/applications','POST'],['/surveys','POST'],['/admin/member','POST'],['/admin/settings','POST'],['/admin/template','POST DELETE'],['/admin/shift','POST'],['/admin/day-plan','POST'],['/admin/attendance','POST'],['/admin/volunteer','POST'],['/admin/account','POST'],['/admin/application','POST'],['/admin/sync','POST']
 ]);
 export async function createApp({dataDir=process.env.DATA_DIR||path.join(root,'data'),publicUrl=process.env.PUBLIC_URL||'',dev=false,sync=true,clock=Date.now}={}){
@@ -37,8 +37,8 @@ export async function createApp({dataDir=process.env.DATA_DIR||path.join(root,'d
   if(vite){vite.middlewares(req,res,()=>error(res,404,'页面不存在'));return}
   const base=path.join(root,'dist');let pathname;try{pathname=decodeURIComponent(url.pathname)}catch{error(res,400,'路径格式错误');return}
   const file=path.resolve(base,'.'+pathname);if(file!==base&&!file.startsWith(base+path.sep)){error(res,403,'禁止访问此路径');return}
-  let target=file;try{if(!(await stat(target)).isFile())throw Error()}catch{if(!['/','/wenjuan'].includes(url.pathname)){error(res,404,'页面不存在');return}target=path.join(base,'index.html')}
-  const bytes=await readFile(target);res.writeHead(200,{'Content-Type':types[path.extname(target)]||'application/octet-stream','Cache-Control':url.pathname.startsWith('/assets/')?'public, max-age=31536000, immutable':'no-cache','X-Content-Type-Options':'nosniff'});res.end(req.method==='HEAD'?undefined:bytes);
+  let target=file;try{if(!(await stat(target)).isFile())throw Error()}catch{if(!['/','/wenjuan','/a','/b','/c','/d','/e'].includes(url.pathname)){error(res,404,'页面不存在');return}target=path.join(base,'index.html')}
+  let bytes=await readFile(target);if(/^\/[a-e]$/.test(url.pathname)&&path.extname(target)==='.html'){const route=await store(storage.DB).get('recruit-route:'+url.pathname[1]);const version=route?.versionId?await store(storage.DB).get(route.versionId):null;const title=String(version?.title||'报名表').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;');bytes=Buffer.from(bytes.toString().replace(/<title>[^<]*<\/title>/,'<title>'+title+'</title>'))}res.writeHead(200,{'Content-Type':types[path.extname(target)]||'application/octet-stream','Cache-Control':url.pathname.startsWith('/assets/')?'public, max-age=31536000, immutable':'no-cache','X-Content-Type-Options':'nosniff'});res.end(req.method==='HEAD'?undefined:bytes);
  }catch(e){console.error('[请求错误]',e.message);if(!res.headersSent)error(res,500,'服务暂时不可用，请稍后重试');else res.end()}});
  return{server,storage,async close(){await new Promise(resolve=>server.close(resolve));server.closeAllConnections();await scheduler?.stop();await vite?.close();storage.close()}};
 }

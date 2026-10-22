@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{namesForWeek,normalizedWeekRules}from'../lib/duty-weeks.js';
+test('按学期周而非自然周单双判断，周日到周一切换',()=>{const t={names:['每周','单周','双周'],weekRules:{单周:'odd',双周:'even'}};assert.deepEqual(namesForWeek(t,'2026-10-11'),['每周','单周']);assert.deepEqual(namesForWeek(t,'2026-10-12'),['每周','双周']);assert.deepEqual(namesForWeek(t,'2026-10-19'),['每周','单周']);assert.deepEqual(namesForWeek(t,'2026-10-26'),['每周','双周'])});
+test('旧模板默认每周，删除人员规则不残留，非法规则拒绝',()=>{assert.deepEqual(namesForWeek({names:['甲','乙']},'2026-10-19'),['甲','乙']);assert.deepEqual(normalizedWeekRules(['甲'],{甲:'odd',乙:'even'}),{甲:'odd'});assert.throws(()=>normalizedWeekRules(['甲'],{甲:'monthly'}))});

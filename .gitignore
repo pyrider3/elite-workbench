@@ -9,4 +9,9 @@ work/
 .runtime/
 __pycache__/
 *.pyc
-deployment/*.env
+*.sqlite*
+*.zip
+*.pem
+*.key
+deployment/
+qing-signup/deployment/

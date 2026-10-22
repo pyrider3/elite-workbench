@@ -1,0 +1,1 @@
+export function validateForm(value:any):any;export function validateAnswers(form:any,answers:any):any;export function isOpen(route:any,now:number):boolean;export function recruitment(options:any):Promise<Response|null>;
