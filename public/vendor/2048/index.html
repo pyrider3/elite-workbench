@@ -1,0 +1,66 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'none'; base-uri 'none'; form-action 'none'"><title>2048 · 等待小游戏</title><link rel="stylesheet" href="style/main.css"><style>body{margin:0;padding:16px 8px;background:#faf8ef}h1.title{font-size:60px}.game-container{margin-top:18px}.above-game{font-size:14px}.credits{font-size:12px;margin:14px 0}.score-container:after{content:'得分'}.best-container:after{content:'最高'}@media(max-width:520px){h1.title{font-size:42px}}</style></head><body>  <div class="container">
+    <div class="heading">
+      <h1 class="title">2048</h1>
+      <div class="scores-container">
+        <div class="score-container">0</div>
+        <div class="best-container">0</div>
+      </div>
+    </div>
+
+    <div class="above-game">
+      <p class="game-intro">方向键或滑动，合并到 <strong>2048</strong>！</p>
+      <a class="restart-button">新游戏</a>
+    </div>
+
+    <div class="game-container">
+      <div class="game-message">
+        <p></p>
+        <div class="lower">
+	        <a class="keep-playing-button">继续玩</a>
+          <a class="retry-button">再来一次</a>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+      </div>
+
+      <div class="tile-container">
+
+      </div>
+    </div>
+
+<p class="credits">原作 Gabriele Cirulli · MIT 开源许可<br>方向键或触屏滑动操作；不影响文件处理进度。</p></div>  <script src="js/bind_polyfill.js"></script>
+  <script src="js/classlist_polyfill.js"></script>
+  <script src="js/animframe_polyfill.js"></script>
+  <script src="js/keyboard_input_manager.js"></script>
+  <script src="js/html_actuator.js"></script>
+  <script src="js/grid.js"></script>
+  <script src="js/tile.js"></script>
+  <script src="js/local_storage_manager.js"></script>
+  <script src="js/game_manager.js"></script>
+  <script src="js/application.js"></script>
+</body></html>

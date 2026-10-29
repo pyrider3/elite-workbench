@@ -24,9 +24,10 @@ try:
   live.backup(snapshot);live.close()
   assert snapshot.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
   manifest['databaseCounts']=dict(snapshot.execute('SELECT kind,count(*) FROM entries GROUP BY kind'))
-  refs=set()
+  refs=set();file_jobs=[]
   for (raw,) in snapshot.execute('SELECT data FROM entries'):
    d=json.loads(raw)
+   if d.get('inputs') and d.get('owner') and d.get('expiresAt',0)>datetime.datetime.now(datetime.timezone.utc).timestamp()*1000:file_jobs.append(d)
    if d.get('photo'):refs.add(d['photo'])
    for a in d.get('attachments',[]):
     if a.get('key'):refs.add(a['key'])
@@ -46,6 +47,16 @@ try:
     if not (photos/key).is_file() or not (photos/(key+'.json')).is_file():raise RuntimeError('Referenced photo missing')
    for path in sorted(photos.rglob('*')):
     if path.is_file():add(z,path,'elite-workbench-server/data/photos/'+str(path.relative_to(photos)))
+   for job in file_jobs:
+    # Input/output metadata comes from the consistent database snapshot; committed files are immutable.
+    for folder,items in [('input',job.get('inputs',[])),('output',job.get('outputs',[]))]:
+     for item in items:
+      matches=list((ROOT/'data/file-tasks').glob('file-*/'+folder+'/'+item['disk']))
+      matches=[p for p in matches if p.is_file() and not p.is_symlink()]
+      if len(matches)!=1:raise RuntimeError('Referenced file task artifact missing')
+      p=matches[0]
+      if hashlib.sha256(p.read_bytes()).hexdigest()!=item['sha256']:raise RuntimeError('File task artifact checksum mismatch')
+      add(z,p,'elite-workbench-server/data/'+str(p.relative_to(ROOT/'data')))
    config=(ROOT/'deployment/cloudflared.yml').read_text()
    match=re.search(r'^credentials-file:\s*(.+)$',config,re.M)
    if not match:raise RuntimeError('Tunnel credentials path missing')
@@ -56,6 +67,7 @@ try:
     system_files=[Path('/etc/nginx/sites-available/elite-workbench'),Path('/etc/nginx/sites-available/qing-signup')]
     system_files += [Path('/etc/systemd/system')/(name+'.service') for name in ['elite-workbench','qing-signup','elite-workbench-tunnel','qing-official-site','elite-sites-backup']]
     system_files += [Path('/etc/systemd/system/elite-sites-backup.timer')]
+    system_files += list(Path('/etc/systemd/system/elite-workbench.service.d').glob('*.conf'))
     system_files += [Path('/etc/letsencrypt/live/dj.qnjyxh.xyz')/name for name in ['fullchain.pem','privkey.pem']]
     system_files += [Path('/etc/letsencrypt/live/new.qnjyxh.xyz')/name for name in ['fullchain.pem','privkey.pem']]
     for path in system_files:

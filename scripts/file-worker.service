@@ -1,0 +1,14 @@
+[Unit]
+Description=Elite file processing worker on Dell
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 %h/.local/share/elite-file-worker/file-worker.py
+Restart=always
+RestartSec=10
+UMask=0077
+MemoryMax=4G
+TasksMax=128
+[Install]
+WantedBy=default.target

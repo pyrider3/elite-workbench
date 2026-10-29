@@ -1,4 +1,10 @@
+
 process.env.INITIAL_PASSWORD_SUPERADMIN='test-superadmin-only';
+process.env.INITIAL_PASSWORD_VIEWER='test-viewer-only';
+process.env.INITIAL_PASSWORD_OFFICE='test-office-only';
+process.env.INITIAL_PASSWORD_MEDIA='test-media-only';
+process.env.INITIAL_PASSWORD_PROJECT='test-project-only';
+process.env.INITIAL_PASSWORD_PRACTICE='test-practice-only';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp,rm} from 'node:fs/promises';

@@ -9,7 +9,7 @@ test('打卡原因覆盖未选择、加载、无班、未开放、开放边界�
  assert.equal(state([shift],[],at('07:50')).label,'拍照打卡');
  assert.equal(state([shift],[],at('08:35')).label,'拍照打卡');
  assert.equal(state([shift],[],at('08:35')+1).label,'已超过打卡时限');
- assert.match(state([shift],[],at('08:36')).reason,/办公室示例甲丙乙/);
+ assert.match(state([shift],[],at('08:36')).reason,/办公室示例甲丙丁/);
  assert.equal(state([{...shift,threshold:20}],[],at('08:40')).label,'拍照打卡');
  assert.equal(state([{...shift,threshold:0}],[],at('08:20')+1).label,'已超过打卡时限');
  assert.equal(state([shift],[{shiftId:'a',name:'测试甲',checkin:at('08:20')}]).label,'本班已打卡');
@@ -24,4 +24,11 @@ test('连续班次共享一次打卡提示，但下午新班次仍正常开放',
  assert.equal(checkinAvailability([shift,second,third],[],'测试甲',at('10:00')).label,'已超过打卡时限');
  assert.equal(checkinAvailability([shift,second,third],records,'测试甲',at('13:00')).label,'尚未到打卡时间');
  assert.equal(checkinAvailability([shift,second,third],records,'测试甲',at('13:30')).label,'拍照打卡');
+});
+test('10分钟课间休息共享打卡状态和第一班时限，11分钟不合并',()=>{
+ const first={...shift,start:'15:00',end:'16:20'},second={...shift,id:'b',start:'16:30',end:'18:00'};
+ const records=['a','b'].map(shiftId=>({shiftId,name:'测试甲',checkin:at('15:00')}));
+ for(const time of ['16:20','16:25','16:30'])assert.equal(checkinAvailability([second,first],records,'测试甲',at(time)).label,'本班已打卡');
+ assert.equal(checkinAvailability([first,second],[],'测试甲',at('16:30')).label,'已超过打卡时限');
+ assert.equal(checkinAvailability([first,{...second,start:'16:31'}],records.slice(0,1),'测试甲',at('16:31')).label,'拍照打卡');
 });

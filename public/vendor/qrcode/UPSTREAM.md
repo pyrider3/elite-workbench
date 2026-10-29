@@ -1,0 +1,1 @@
+QR codes are generated locally in the browser using qrcode 1.5.4 (https://github.com/soldair/node-qrcode), MIT licensed. The browser bundle also includes the dijkstrajs dependency; its license is retained here. No external QR image service receives form links.

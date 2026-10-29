@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{latestApplications}from'../lib/application-latest.js';
+test('先按姓名和联系方式取最新，保留同名不同人和缺少联系方式的记录',()=>{const rows=[{id:'a',name:'同学',contact:' wx123 ',createdAt:1},{id:'b',name:'同学',contact:'WX123',createdAt:2},{id:'c',name:'同学',contact:'other',createdAt:3},{id:'d',name:'同学',contact:'',createdAt:4},{id:'e',name:'同学',createdAt:5}];assert.deepEqual(latestApplications(rows).map(r=>r.id),['b','c','d','e']);assert.deepEqual(latestApplications([{...rows[0],isLatestSubmission:false}]),[])});
